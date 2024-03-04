@@ -18,9 +18,15 @@ function PlayerTimer({ playerIndex, expiryTimestamp, umbral, totalTime, colors, 
     autoStart: false 
   });
 
+  const [playerName, setPlayerName] = useState(players[playerIndex].name)
+
+  useEffect(() => {
+    setPlayerName(players[playerIndex].name);
+  }, [players])
+
   return (
     <div className={`bg-${colors[playerIndex]}-950 py-8 ${currentPlayer != playerIndex ? 'hidden' : ''} text-center my-auto text-zinc-200`}>
-      <h2 className={`mb-4 text-2xl text-${colors[playerIndex]}-300`}>Player {playerIndex+1}</h2>
+      <h2 className={`mb-4 text-2xl text-${colors[playerIndex]}-300`}>{playerName}</h2>
       <div className={`text-6xl ${totalSeconds < umbral ? 'text-rose-700' : ''}`}>
         <span>{hours}</span>:<span>{minutes}</span>:<span>{seconds}</span>
       </div>
@@ -29,13 +35,6 @@ function PlayerTimer({ playerIndex, expiryTimestamp, umbral, totalTime, colors, 
         <button className={`${(isRunning || totalSeconds < totalTime) ? 'hidden' : ''} border-1 border-${colors[playerIndex]}-800 hover:border-${colors[playerIndex]}-900 hover:bg-${colors[playerIndex]}-600/75 active:bg-${colors[playerIndex]}-900 mx-4 px-8 py-2 text-${colors[playerIndex]}-300 transition-all duration-300`} onClick={start}>Start</button>
         
         <button className={`${isRunning ? '' : 'hidden'} border-1 border-${colors[playerIndex]}-800 hover:border-${colors[playerIndex]}-900 hover:bg-${colors[playerIndex]}-600/75 active:bg-${colors[playerIndex]}-900 mx-4 px-8 py-2 text-${colors[playerIndex]}-300 transition-all duration-300`} onClick={() => {
-
-          console.log("players.length: ", players.length);
-          console.log("playerIndex:    ", playerIndex);
-          console.log("currentPlayer:  ", currentPlayer);
-          console.log(players.length, "=", currentPlayer+1, players.length == currentPlayer+1);
-          console.log("BEFORE:  currentPlayer: ", currentPlayer, colors[currentPlayer]);
-
           if (players.length == currentPlayer+1) {
             setCurrentPlayer(0);
           } else {
@@ -47,19 +46,10 @@ function PlayerTimer({ playerIndex, expiryTimestamp, umbral, totalTime, colors, 
           } else {
             setCurrentPlayer(currentPlayer++);
           }
-
-          console.log("AFTER:   currentPlayer: ", currentPlayer, colors[currentPlayer]);
-          console.log("___________________________________________")
           pause();
         }}>Pause</button>
         
         <button className={`${isRunning ? 'hidden' : ''} border-1 border-${colors[playerIndex]}-800 hover:border-${colors[playerIndex]}-900 hover:bg-${colors[playerIndex]}-600/75 active:bg-${colors[playerIndex]}-900 mx-4 px-8 py-2 text-${colors[playerIndex]}-300 transition-all duration-300`} onClick={resume}>Resume</button>
-        
-        {/* <button className={`border-1 border-${colors[playerIndex]}-800 hover:border-${colors[playerIndex]}-900 hover:bg-${colors[playerIndex]}-600/75 active:bg-${colors[playerIndex]}-900 mx-4 px-8 py-2 text-${colors[playerIndex]}-300 transition-all duration-300`} onClick={() => {
-          const time = new Date();
-          time.setSeconds(time.getSeconds() + 300);
-          restart(time, true);
-        }}>Restart</button> */}
       </div>
     </div>
   );
@@ -76,19 +66,34 @@ export default function App() {
   
   useEffect(() => {
     if (players.length > 0) setColor(colors[currentPlayer]);
-    console.log('App: '+ color)
   }, [currentPlayer, players]);
 
   const addPlayer = () => {
+    const newPlayers = [...players];
+    newPlayers.pop();
     const newPlayer = { 
       name: `Player ${players.length + 1}`,
-      expiryTimestamp: new Date(new Date().getTime() + totalTime * 1000), // 10 minutes timer
+      expiryTimestamp: new Date(new Date().getTime() + totalTime * 1000),
     };
-    setPlayers([...players, newPlayer]);
+    const hiddenPlayer = { 
+      name: `Hidden`,
+      hidden: true,
+      expiryTimestamp: new Date(new Date().getTime() + totalTime * 1000),
+    };
+    setPlayers([...newPlayers, newPlayer, hiddenPlayer]);
   };
 
   const removePlayer = (index) => {
-    setPlayers(players.splice(index, 1));
+    const newPlayers = [...players];
+    newPlayers.splice(index, 1)
+    setPlayers(newPlayers);
+  };
+
+  const changeName = (index) => {
+    const newPlayers = [...players];
+    const newName = prompt("Please write down the new player name")
+    newPlayers[index].name = newName ? newName : "Player " + index;
+    setPlayers(newPlayers);
   };
 
   return (
@@ -124,11 +129,12 @@ export default function App() {
         <hr className='my-2'></hr>
         <div className='grid grid-cols-1'>
           {players.map((player, index) => (
-            <p className={`text-${colors[index]}-300`}>
-              Player {index+1}
-              <span><i className="bi bi-trash"></i></span>
-            </p>
-          ))}
+           !player.hidden ? (
+              <p>
+                <span className={`cursor-pointer text-${colors[index]}-300`} onClick={() => {changeName(index)}}>{players[index].name}</span>
+                <span className='ms-20'><i className="cursor-pointer bi bi-trash" onClick={() => {removePlayer(index)}}></i></span>
+              </p>
+          ) : null))}
           <p className='cursor-pointer' onClick={addPlayer}>Add Player</p>
         </div>
       </div>
