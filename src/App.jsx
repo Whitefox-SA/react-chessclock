@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTimer } from 'react-timer-hook';
 
-function PlayerTimer({ playerIndex, expiryTimestamp, umbral, totalTime, colors, players, currentPlayer, setCurrentPlayer }) {
+function PlayerTimer({ playerIndex, expiryTimestamp, totalTime, umbral, repTime, colors, players, currentPlayer, setCurrentPlayer }) {
   const {
     totalSeconds,
     seconds,
@@ -46,6 +46,13 @@ function PlayerTimer({ playerIndex, expiryTimestamp, umbral, totalTime, colors, 
           } else {
             setCurrentPlayer(currentPlayer++);
           }
+
+          if (totalSeconds <= umbral) {
+            const time = new Date();
+            time.setSeconds(time.getSeconds() + totalSeconds + repTime);
+            restart(time, false)
+          }
+
           pause();
         }}>Pause</button>
         
@@ -140,9 +147,21 @@ export default function App() {
       </div>
       <div className="flex justify-center">
       </div>
-      <div className="">
+      <div>
         {players.map((player, index) => (
-          <PlayerTimer key={index} name={player.name} expiryTimestamp={player.expiryTimestamp} umbral={umbral} totalTime={totalTime} repTime={repTime} colors={colors} playerIndex={index} players={players} currentPlayer={currentPlayer} setCurrentPlayer={setCurrentPlayer}/>
+          <PlayerTimer
+            key={index}
+            name={player.name}
+            expiryTimestamp={player.expiryTimestamp}
+            umbral={umbral}
+            totalTime={totalTime}
+            repTime={repTime}
+            colors={colors}
+            playerIndex={index}
+            players={players}
+            currentPlayer={currentPlayer}
+            setCurrentPlayer={setCurrentPlayer}
+          />
         ))}
       </div>
     </div>
