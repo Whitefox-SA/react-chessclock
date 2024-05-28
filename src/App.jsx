@@ -14,9 +14,7 @@ function PlayerTimer({ playerIndex, expiryTimestamp, totalTime, umbral, repTime,
     restart,
   } = useTimer({ 
     expiryTimestamp, 
-    onExpire: () => {
-      window.alert(`${playerName} timed up`)
-    }, 
+    onExpire: () => {window.alert(`${playerName} timed up`)}, 
     autoStart: false 
   });
 
@@ -170,7 +168,7 @@ export default function App() {
       <div className={`hidden mt-4 border-rose-800 bg-rose-950 hover:border-rose-900 hover:bg-rose-600/75 active:bg-rose-900 mx-4 text-rose-300`}></div>
     </div>
       <h1 className="py-8 text-4xl text-center">Chess Clock</h1>
-      <div className='top-4 left-4 z-20 absolute w-1/3'>
+      <div className='sm:top-4 sm:left-4 z-20 relative text-xl px-8 sm:px-1 sm:text-base sm:absolute w-full sm:w-1/3'>
         <div className='grid grid-cols-2'>
           <p>Total Time: </p><p className={`${playing ? 'text-zinc-500' : 'cursor-pointer' }`} onClick={() =>{
             if (!playing) {
@@ -195,9 +193,9 @@ export default function App() {
         <div className='grid grid-cols-1'>
           {players.map((player, index) => (
            !player.hidden ? (
-              <p>
-                <span className={`cursor-pointer text-${player.color}-300`} onClick={() => {changeName(index)}}>{player.name}</span>
-                <span className='ms-20'><i className="cursor-pointer bi bi-trash" onClick={() => {removePlayer(index)}}></i></span>
+              <p className='grid sm:grid-cols-3 grid-cols-2'>
+                <span className={`cursor-pointer sm:col-span-2 col-auto text-${player.color}-300`} onClick={() => {changeName(index)}}>{player.name}</span>
+                <span><i className="cursor-pointer bi bi-trash" onClick={() => {removePlayer(index)}}></i></span>
               </p>
           ) : null))}
           <p className='cursor-pointer' onClick={addPlayer}>Add Player</p>
@@ -205,7 +203,7 @@ export default function App() {
       </div>
       <div className="flex justify-center">
       </div>
-      <div className='bottom-12 absolute w-screen'>
+      <div className='sm:bottom-12 sm:absolute w-screen'>
         {players.map((player, index) => (
           <PlayerTimer
             key={index}
