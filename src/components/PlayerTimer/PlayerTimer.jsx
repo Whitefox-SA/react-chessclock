@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTimer } from 'react-timer-hook';
+import { formatTime } from '../../utils/formatTime';
 
 function PlayerTimer({ playerIndex, expiryTimestamp, totalTime, umbral, repTime, colors, color, players, currentPlayer, setCurrentPlayer }) {
   const {
@@ -23,10 +24,6 @@ function PlayerTimer({ playerIndex, expiryTimestamp, totalTime, umbral, repTime,
   useEffect(() => {
     setPlayerName(players[playerIndex].name);
   }, [players])
-
-  const formatTime = (time) => {
-    return time.toString().padStart(2, '0');
-  }
 
   return (
     <div className={`bg-${color}-950 py-8 ${currentPlayer != playerIndex ? 'hidden' : ''} text-center my-auto text-zinc-200`}>
