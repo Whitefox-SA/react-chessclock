@@ -59,4 +59,12 @@ export default {
     },
   },
   plugins: [],
+  safelist: [
+    {
+      pattern: /bg-(red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-950/,
+    },
+    {
+      pattern: /text-(red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-300/,
+    },
+  ],
 }
